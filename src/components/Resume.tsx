@@ -109,7 +109,7 @@ export default function Resume() {
   }, [selectedId]);
 
   return (
-    <section id="experience" className="relative w-full bg-[#09090b] text-white py-32 px-6 md:px-12 lg:px-24 selection:bg-cyan-500/30 selection:text-white border-t border-cyan-900/40">
+    <section id="experience" className="relative w-full bg-[#09090b] text-white py-32 px-6 md:px-12 lg:px-24 selection:bg-cyan-500/30 selection:text-white border-t border-cyan-900/40 overflow-hidden">
       {/* Decorative top border fade */}
       <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
       

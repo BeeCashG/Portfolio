@@ -44,7 +44,7 @@ const SkillBar = ({ name, level, delay }: { name: string; level: number; delay: 
 
 export default function Skills() {
   return (
-    <section id="skills" className="relative w-full bg-[#09090b] text-white py-24 px-6 md:px-12 lg:px-24 border-t border-cyan-900/40">
+    <section id="skills" className="relative w-full bg-[#09090b] text-white py-24 px-6 md:px-12 lg:px-24 border-t border-cyan-900/40 overflow-hidden">
       <div className="max-w-6xl mx-auto">
         <motion.div 
           initial={{ opacity: 0, y: 30 }}

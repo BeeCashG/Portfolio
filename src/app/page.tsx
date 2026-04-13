@@ -24,7 +24,7 @@ export default async function Home() {
   }
 
   return (
-    <main id="home" className="min-h-screen bg-[#09090b] font-sans relative">
+    <main id="home" className="min-h-screen bg-[#09090b] font-sans relative overflow-x-hidden">
       <Navbar />
       <ScrollyCanvas />
       <Skills />
