@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 
 const pillars = [
@@ -10,7 +10,8 @@ const pillars = [
     description: "Designing high-performance growth models, CRM-driven automation, and authoritative brand architectures.",
     skills: ["SEO Mastery", "Growth Analytics", "Brand Strategy", "CRM Automation"],
     accent: "from-cyan-400 to-blue-600",
-    glow: "rgba(34, 211, 238, 0.3)"
+    glow: "rgba(34, 211, 238, 0.3)",
+    score: 98
   },
   {
     title: "ENGINEER",
@@ -18,7 +19,8 @@ const pillars = [
     description: "Engineering resilient, full-stack web applications with localized performance and pixel-perfect fluidity.",
     skills: ["React / Next.js", "Python / Django", "PHP / Node.js", "Cloud Systems"],
     accent: "from-fuchsia-400 to-purple-600",
-    glow: "rgba(217, 70, 239, 0.3)"
+    glow: "rgba(217, 70, 239, 0.3)",
+    score: 94
   },
   {
     title: "SYSTEMS",
@@ -26,7 +28,8 @@ const pillars = [
     description: "Securing the digital foundation through specialized server management and deep technical auditing.",
     skills: ["Linux Server", "Cyber Security", "Network Admin", "Graphic Design"],
     accent: "from-amber-400 to-orange-500",
-    glow: "rgba(251, 191, 36, 0.3)"
+    glow: "rgba(251, 191, 36, 0.3)",
+    score: 91
   }
 ];
 
@@ -40,6 +43,7 @@ const ParallaxCard = ({ pillar, index }: { pillar: typeof pillars[0]; index: num
   // Multilayer Parallax Offsets
   const yBg = useTransform(scrollYProgress, [0, 1], [-100, 100]);
   const yText = useTransform(scrollYProgress, [0, 1], [-50, 50]);
+  const yScore = useTransform(scrollYProgress, [0, 1], [-80, 80]);
   const yPills = useTransform(scrollYProgress, [0, 1], [30, -30]);
   const rotateX = useTransform(scrollYProgress, [0, 0.5, 1], [5, 0, -5]);
   const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
@@ -68,6 +72,20 @@ const ParallaxCard = ({ pillar, index }: { pillar: typeof pillars[0]; index: num
           {pillar.skills.map(s => (
             <span key={s} className="text-4xl md:text-6xl font-black uppercase tracking-tighter text-white/10">{s}</span>
           ))}
+        </motion.div>
+
+        {/* Score Layer (Parallax Floating) */}
+        <motion.div 
+          style={{ y: yScore }}
+          className="absolute top-12 right-12 md:top-20 md:right-24 z-20 flex flex-col items-end pointer-events-none"
+        >
+          <span className="text-cyan-400 font-mono text-[10px] uppercase tracking-widest mb-1 opacity-50">Mastery</span>
+          <div className="flex items-baseline gap-1">
+            <span className={`text-4xl md:text-7xl font-black italic text-transparent bg-clip-text bg-gradient-to-br ${pillar.accent}`}>
+              {pillar.score}
+            </span>
+            <span className="text-xl md:text-2xl font-black text-white/20">%</span>
+          </div>
         </motion.div>
 
         {/* Foreground Content Layer */}
@@ -129,11 +147,11 @@ export default function Skills() {
         </motion.div>
 
         <div className="space-y-24">
-          {pillars.map((pillar, idx) => (
+          {pillars.map((pillar, index) => (
             <ParallaxCard 
               key={pillar.title} 
               pillar={pillar} 
-              index={idx} 
+              index={index} 
             />
           ))}
         </div>
