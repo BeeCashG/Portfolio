@@ -35,7 +35,7 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="relative z-20 w-full bg-[#09090b] text-white py-32 px-6 md:px-12 lg:px-24 selection:bg-cyan-500/30">
+    <section id="contact" className="relative z-20 w-full bg-[#09090b] text-white py-32 px-6 md:px-12 lg:px-24 selection:bg-cyan-500/30 overflow-hidden">
       {/* Decorative top border fade */}
       <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent" />
       
