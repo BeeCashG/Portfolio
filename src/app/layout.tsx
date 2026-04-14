@@ -11,8 +11,8 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL("https://bikashgupta.com"),
   title: {
-    default: "Er. Bikash Gupta | Creative Developer & Digital Strategist",
-    template: "%s | Bikash Gupta"
+    default: "Er. Bikash Gupta",
+    template: "%s | Er. Bikash Gupta"
   },
   description: "Official portfolio of Er. Bikash Gupta. Experienced Digital Marketing Strategist, Professor, and Full-Stack Developer shaping modern web experiences with code and strategy.",
   keywords: ["Bikash Gupta", "Er. Bikash Gupta", "Creative Developer", "Digital Strategist", "Full Stack Developer", "Digital Marketing Professor", "Nepal Developer", "Tech Strategy"],
@@ -22,21 +22,21 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://bikashgupta.com",
-    title: "Er. Bikash Gupta | Creative Developer & Digital Strategist",
+    title: "Er. Bikash Gupta",
     description: "Shaping modern web experiences with high-end code and digital strategy.",
     siteName: "Bikash Gupta Portfolio",
     images: [{
-      url: "/gallery/asset1.jpg", // Default to an existing asset if og-image is missing
+      url: "/gallery/asset1.webp",
       width: 1200,
       height: 630,
-      alt: "Bikash Gupta Portfolio Preview"
+      alt: "Er. Bikash Gupta Portfolio"
     }]
   },
   twitter: {
     card: "summary_large_image",
-    title: "Er. Bikash Gupta | Creative Developer & Digital Strategist",
+    title: "Er. Bikash Gupta",
     description: "Digital Marketing Strategist and Full-Stack Developer Portfolio.",
-    images: ["/gallery/asset1.jpg"],
+    images: ["/gallery/asset1.webp"],
   },
   robots: {
     index: true,
