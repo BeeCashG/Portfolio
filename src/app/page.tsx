@@ -30,7 +30,7 @@ export default async function Home() {
     url: "https://bikashgupta.com",
     jobTitle: "Creative Developer & Digital Strategist",
     description: "Experienced Digital Marketing Strategist, Professor, and Full-Stack Developer shaping modern web experiences with code and strategy.",
-    image: "https://bikashgupta.com/gallery/asset1.jpg",
+    image: "https://bikashgupta.com/gallery/asset1.webp",
     sameAs: [
       "https://github.com/BeeCashG",
       "https://www.bikashgupta.com"
