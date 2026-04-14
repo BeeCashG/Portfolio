@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useAnimation, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
+import { motion, useAnimation, AnimatePresence, useMotionValue, useTransform, useSpring } from "framer-motion";
 import { useState, useRef, useEffect, useMemo } from "react";
 
 interface GalleryProps {
@@ -20,59 +20,107 @@ const GalleryCard = ({ image, index, x, totalImages, cardWidth, onClick }: Galle
   const cardOuterWidth = cardWidth;
   const cardInnerWidth = cardWidth - 24; 
   
-  // High-fidelity transform logic:
-  // We calculate the center of the card relative to the center of the screen
-  const scale = useTransform(x, (latest: number) => {
-    const centerOfCard = latest + initialOffset + (cardInnerWidth / 2);
-    const centerOfScreen = typeof window !== 'undefined' ? window.innerWidth / 2 : 500;
-    const distance = Math.abs(centerOfCard - centerOfScreen);
-    return Math.max(0.85, 1.1 - (distance / 1000));
+  // Base transform logic: Viewport tracking
+  const centerOfCard = useTransform(x, (latest: number) => latest + initialOffset + (cardInnerWidth / 2));
+  const centerOfScreen = typeof window !== 'undefined' ? window.innerWidth / 2 : 500;
+  
+  // 1. Kinetic Spring Physics for ultra-smoothness
+  const springConfig = { stiffness: 100, damping: 30, mass: 1 };
+
+  const scale = useSpring(useTransform(centerOfCard, (val) => {
+    const distance = Math.abs(val - centerOfScreen);
+    return Math.max(0.85, 1.15 - (distance / 800));
+  }), springConfig);
+
+  const opacity = useSpring(useTransform(centerOfCard, (val) => {
+    const distance = Math.abs(val - centerOfScreen);
+    return Math.max(0.2, 1 - (distance / 600));
+  }), springConfig);
+
+  // 2. 3D Cylindrical Rotation (Perspective depth)
+  const rotateY = useSpring(useTransform(centerOfCard, (val) => {
+    const distance = val - centerOfScreen;
+    return Math.max(-25, Math.min(25, (distance / 400) * 45));
+  }), springConfig);
+
+  const z = useSpring(useTransform(centerOfCard, (val) => {
+    const distance = Math.abs(val - centerOfScreen);
+    return Math.max(-100, 100 - (distance / 4));
+  }), springConfig);
+
+  // 3. Dynamic Neon Glow (Cyan/Fuchsia)
+  const glowOpacity = useTransform(centerOfCard, (val) => {
+    const distance = Math.abs(val - centerOfScreen);
+    return Math.max(0, 0.6 - (distance / 400));
   });
 
-  const opacity = useTransform(x, (latest: number) => {
-    const centerOfCard = latest + initialOffset + (cardInnerWidth / 2);
-    const centerOfScreen = typeof window !== 'undefined' ? window.innerWidth / 2 : 500;
-    const distance = Math.abs(centerOfCard - centerOfScreen);
-    return Math.max(0.3, 1 - (distance / 600));
-  });
-
-  const grayscale = useTransform(x, (latest: number) => {
-    const centerOfCard = latest + initialOffset + (cardInnerWidth / 2);
-    const centerOfScreen = typeof window !== 'undefined' ? window.innerWidth / 2 : 500;
-    const distance = Math.abs(centerOfCard - centerOfScreen);
+  const grayscale = useTransform(centerOfCard, (val) => {
+    const distance = Math.abs(val - centerOfScreen);
     const amount = Math.min(100, (distance / 300) * 100);
     return `grayscale(${amount}%)`;
   });
 
-  const brightness = useTransform(x, (latest: number) => {
-    const centerOfCard = latest + initialOffset + (cardInnerWidth / 2);
-    const centerOfScreen = typeof window !== 'undefined' ? window.innerWidth / 2 : 500;
-    const distance = Math.abs(centerOfCard - centerOfScreen);
-    const amount = Math.max(0.8, 1.2 - (distance / 500));
+  const brightness = useTransform(centerOfCard, (val) => {
+    const distance = Math.abs(val - centerOfScreen);
+    const amount = Math.max(0.6, 1.3 - (distance / 400));
     return `brightness(${amount})`;
   });
+
+  // 4. Image Parallax for internal depth
+  const imageX = useSpring(useTransform(centerOfCard, (val) => {
+    const distance = val - centerOfScreen;
+    return (distance / 10);
+  }), springConfig);
 
   return (
     <motion.div
       layoutId={`card-gallery-${index}`}
       onClick={onClick}
-      style={{ scale, opacity, filter: `${grayscale} ${brightness}` }}
-      className="relative rounded-[1.5rem] overflow-hidden border border-white/5 bg-zinc-900/50 group backdrop-blur-sm shrink-0 cursor-pointer transition-shadow"
+      style={{ 
+        scale, 
+        opacity, 
+        rotateY,
+        z,
+        filter: `${grayscale} ${brightness}`,
+        perspective: "1000px",
+        transformStyle: "preserve-3d"
+      }}
+      className="relative rounded-[2rem] overflow-hidden border border-white/5 bg-zinc-900/40 group backdrop-blur-xl shrink-0 cursor-pointer transition-all duration-500"
       style={{ 
         width: cardInnerWidth,
-        height: typeof window !== 'undefined' && window.innerWidth < 768 ? 340 : 420 
+        height: typeof window !== 'undefined' && window.innerWidth < 768 ? 360 : 460 
       }}
     >
-      <motion.img 
-        layoutId={`img-gallery-${index}`}
-        src={image} 
-        alt={`Design ${index}`}
-        className="w-full h-full object-cover transition-all duration-700"
+      {/* Dynamic Neon Border Glow */}
+      <motion.div 
+        style={{ opacity: glowOpacity }}
+        className="absolute inset-0 border-[2px] border-cyan-500/40 shadow-[0_0_30px_rgba(6,182,212,0.3)] z-10 pointer-events-none rounded-[2rem]"
       />
-      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-6 opacity-0 group-hover:opacity-100 transition-opacity">
-        <span className="text-fuchsia-400 font-mono text-[10px] uppercase font-bold tracking-widest">Asset #{(index % totalImages) + 1}</span>
+      
+      <motion.div className="w-full h-full overflow-hidden relative">
+        <motion.img 
+          layoutId={`img-gallery-${index}`}
+          src={image} 
+          alt={`Design ${index}`}
+          style={{ x: imageX, scale: 1.2 }}
+          className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-[1.3]"
+        />
+      </motion.div>
+
+      {/* Asset Info Overlay */}
+      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-8 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0">
+        <div className="flex items-center gap-2 mb-1">
+          <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
+          <span className="text-cyan-400 font-mono text-[9px] uppercase font-bold tracking-[0.3em] drop-shadow-[0_0_5px_rgba(34,211,238,0.5)]">
+            Active Asset
+          </span>
+        </div>
+        <p className="text-white font-black text-xl italic tracking-tighter">PROJECT_{index + 1}</p>
       </div>
-      <div className="absolute inset-0 border-[1px] border-white/5 rounded-[1.5rem] pointer-events-none group-hover:border-fuchsia-500/20 transition-colors duration-500" />
+
+      {/* High-fidelity glass reflection */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent pointer-events-none" />
+      <div className="absolute inset-0 border border-white/10 rounded-[2rem] pointer-events-none group-hover:border-cyan-500/30 transition-colors" />
     </motion.div>
   );
 };
@@ -240,7 +288,8 @@ export default function Gallery({ images = [] }: GalleryProps) {
 
         <motion.div 
           ref={carousel} 
-          className="cursor-grab active:cursor-grabbing overflow-hidden"
+          className="cursor-grab active:cursor-grabbing overflow-visible"
+          style={{ perspective: "2000px" }}
           whileTap={{ cursor: "grabbing" }}
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
