@@ -76,25 +76,25 @@ const Slide = ({ slide, index, scrollYProgress }: { slide: typeof slides[0]; ind
   const opacity = useTransform(scrollYProgress, [start, start + 0.05, end - 0.05, end], [0, 1, 1, 0]);
 
   return (
-    <div className="h-screen w-full flex items-center justify-center relative">
-      <motion.div style={{ y, opacity }} className="max-w-6xl w-full px-6 flex flex-col md:flex-row items-center gap-12 md:gap-24">
+    <div className="h-[100dvh] w-full flex items-center justify-center relative py-12">
+      <motion.div style={{ y, opacity }} className="max-w-6xl w-full px-6 flex flex-col md:flex-row items-center gap-8 md:gap-24">
         <div className="flex-1 text-center md:text-left">
-          <div className="flex items-center justify-center md:justify-start gap-4 mb-6">
-            <span className={`text-sm font-mono tracking-[0.5em] ${slide.accent}`}>SECTION_{slide.id}</span>
-            <div className="h-[1px] w-12 bg-white/20" />
+          <div className="flex items-center justify-center md:justify-start gap-4 mb-4 md:mb-6">
+            <span className={`text-[10px] md:text-sm font-mono tracking-[0.5em] ${slide.accent}`}>SECTION_{slide.id}</span>
+            <div className="h-[1px] w-8 md:w-12 bg-white/20" />
           </div>
-          <h3 className="text-6xl md:text-9xl font-black tracking-tighter text-white mb-6 leading-none italic uppercase">
+          <h3 className="text-4xl md:text-6xl lg:text-9xl font-black tracking-tighter text-white mb-4 md:mb-6 leading-none italic uppercase">
             {slide.title}
           </h3>
-          <p className="text-xl md:text-2xl font-bold text-white/80 mb-6 tracking-tight">
+          <p className="text-lg md:text-2xl font-bold text-white/80 mb-4 md:mb-6 tracking-tight">
             {slide.subtitle}
           </p>
-          <p className="text-white/40 text-sm md:text-lg leading-relaxed max-w-xl mb-12 font-medium">
+          <p className="text-white/40 text-xs md:text-lg leading-relaxed max-w-xl mb-8 md:mb-12 font-medium">
             {slide.description}
           </p>
-          <div className="flex flex-wrap justify-center md:justify-start gap-3">
+          <div className="flex flex-wrap justify-center md:justify-start gap-2 md:gap-3">
              {slide.skills.map(s => (
-               <span key={s} className="px-5 py-2 rounded-full border border-white/10 bg-white/5 text-[10px] md:text-xs font-black uppercase tracking-widest text-white/60 hover:text-white transition-colors cursor-default">
+               <span key={s} className="px-3 md:px-5 py-1.5 md:py-2 rounded-full border border-white/10 bg-white/5 text-[8px] md:text-xs font-black uppercase tracking-widest text-white/60 hover:text-white transition-colors cursor-default">
                  {s}
                </span>
              ))}
