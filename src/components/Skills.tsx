@@ -34,6 +34,7 @@ const skillGroups = [
     skills: [
       { name: "Linux", level: 80, code: "LNX-SYS" },
       { name: "Photoshop & Design", level: 55, code: "PSD-VIS" },
+      { name: "Canva", level: 99, code: "CNV-DSG" },
       { name: "MS Office", level: 85, code: "MSO-ADM" }
     ]
   }
