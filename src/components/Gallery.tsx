@@ -15,29 +15,29 @@ interface GalleryCardProps {
   onClick: () => void;
 }
 
-const GalleryCard = ({ image, index, x, totalImages, onClick }: GalleryCardProps) => {
-  const cardWidth = 320 + 24;
+const GalleryCard = ({ image, index, x, totalImages, cardWidth, onClick }: GalleryCardProps) => {
   const initialOffset = index * cardWidth;
+  const cardOuterWidth = cardWidth;
+  const cardInnerWidth = cardWidth - 24; 
   
   // High-fidelity transform logic:
   // We calculate the center of the card relative to the center of the screen
-  // And apply a washout effect (blur, grayscale, opacity) as it moves away.
   const scale = useTransform(x, (latest: number) => {
-    const centerOfCard = latest + initialOffset + 160;
+    const centerOfCard = latest + initialOffset + (cardInnerWidth / 2);
     const centerOfScreen = typeof window !== 'undefined' ? window.innerWidth / 2 : 500;
     const distance = Math.abs(centerOfCard - centerOfScreen);
     return Math.max(0.85, 1.1 - (distance / 1000));
   });
 
   const opacity = useTransform(x, (latest: number) => {
-    const centerOfCard = latest + initialOffset + 160;
+    const centerOfCard = latest + initialOffset + (cardInnerWidth / 2);
     const centerOfScreen = typeof window !== 'undefined' ? window.innerWidth / 2 : 500;
     const distance = Math.abs(centerOfCard - centerOfScreen);
     return Math.max(0.3, 1 - (distance / 600));
   });
 
   const grayscale = useTransform(x, (latest: number) => {
-    const centerOfCard = latest + initialOffset + 160;
+    const centerOfCard = latest + initialOffset + (cardInnerWidth / 2);
     const centerOfScreen = typeof window !== 'undefined' ? window.innerWidth / 2 : 500;
     const distance = Math.abs(centerOfCard - centerOfScreen);
     const amount = Math.min(100, (distance / 300) * 100);
@@ -45,7 +45,7 @@ const GalleryCard = ({ image, index, x, totalImages, onClick }: GalleryCardProps
   });
 
   const brightness = useTransform(x, (latest: number) => {
-    const centerOfCard = latest + initialOffset + 160;
+    const centerOfCard = latest + initialOffset + (cardInnerWidth / 2);
     const centerOfScreen = typeof window !== 'undefined' ? window.innerWidth / 2 : 500;
     const distance = Math.abs(centerOfCard - centerOfScreen);
     const amount = Math.max(0.8, 1.2 - (distance / 500));
@@ -57,7 +57,11 @@ const GalleryCard = ({ image, index, x, totalImages, onClick }: GalleryCardProps
       layoutId={`card-gallery-${index}`}
       onClick={onClick}
       style={{ scale, opacity, filter: `${grayscale} ${brightness}` }}
-      className="relative min-w-[260px] md:min-w-[320px] h-[340px] md:h-[420px] rounded-[1.5rem] overflow-hidden border border-white/5 bg-zinc-900/50 group backdrop-blur-sm shrink-0 cursor-pointer transition-shadow"
+      className="relative rounded-[1.5rem] overflow-hidden border border-white/5 bg-zinc-900/50 group backdrop-blur-sm shrink-0 cursor-pointer transition-shadow"
+      style={{ 
+        width: cardInnerWidth,
+        height: typeof window !== 'undefined' && window.innerWidth < 768 ? 340 : 420 
+      }}
     >
       <motion.img 
         layoutId={`img-gallery-${index}`}
@@ -76,12 +80,21 @@ const GalleryCard = ({ image, index, x, totalImages, onClick }: GalleryCardProps
 export default function Gallery({ images = [] }: GalleryProps) {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [isZoomed, setIsZoomed] = useState(false);
-  const [width, setWidth] = useState(0);
-  const [position, setPosition] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
+  const [cardWidth, setCardWidth] = useState(344); // Default: 320 + 24 (gap-6)
   const carousel = useRef<HTMLDivElement>(null);
   const controls = useAnimation();
   const x = useMotionValue(0);
+
+  // Dynamic width tracking for responsive accuracy
+  useEffect(() => {
+    const updateWidth = () => {
+      const isMobile = window.innerWidth < 768;
+      setCardWidth(isMobile ? 260 + 24 : 320 + 24);
+    };
+    updateWidth();
+    window.addEventListener('resize', updateWidth);
+    return () => window.removeEventListener('resize', updateWidth);
+  }, []);
 
   // Sync motion value with state for manual calculations if needed
   useEffect(() => {
@@ -96,17 +109,17 @@ export default function Gallery({ images = [] }: GalleryProps) {
   }, [images]);
 
   const baseWidth = useMemo(() => {
-    return (320 + 24) * (images.length || 0);
-  }, [images.length]);
+    return cardWidth * (images.length || 0);
+  }, [images.length, cardWidth]);
 
   useEffect(() => {
-    if (carousel.current && images.length > 0) {
+    if (images.length > 0) {
       const initialPos = -baseWidth;
       setPosition(initialPos);
+      x.set(initialPos);
       controls.set({ x: initialPos });
-      setWidth(baseWidth * 2);
     }
-  }, [baseWidth, images.length, controls]);
+  }, [baseWidth, images.length, controls, x]);
 
   const handleArrowClick = (direction: 'left' | 'right') => {
     if (images.length === 0) return;
@@ -254,6 +267,7 @@ export default function Gallery({ images = [] }: GalleryProps) {
                 index={i}
                 x={x}
                 totalImages={images.length}
+                cardWidth={cardWidth}
                 onClick={() => setSelectedId(i)}
               />
             ))}
