@@ -39,12 +39,7 @@ export default function Gallery({ images = [] }: GalleryProps) {
   const handleArrowClick = (direction: 'left' | 'right') => {
     if (images.length === 0) return;
     const cardWidth = 320 + 24; 
-    let newPos;
-    if (direction === 'left') {
-      newPos = position + cardWidth;
-    } else {
-      newPos = position - cardWidth;
-    }
+    let newPos = position + (direction === 'left' ? cardWidth : -cardWidth);
 
     // Silent reset logic for infinite feel
     if (newPos > -baseWidth / 2) {
@@ -59,23 +54,35 @@ export default function Gallery({ images = [] }: GalleryProps) {
     controls.start({ x: newPos, transition: { type: "spring", stiffness: 300, damping: 35 } });
   };
 
+  // Continuous Animation Logic
   useEffect(() => {
-    if (isPaused || selectedId !== null || images.length === 0) return;
+    if (isPaused || selectedId !== null || images.length === 0) {
+      controls.stop();
+      return;
+    }
 
-    const interval = setInterval(() => {
-      const cardWidth = 320 + 24;
-      let nextPos = position - cardWidth;
+    const startAnimation = () => {
+      const speed = 40; // Pixels per second
+      const remainingDistance = Math.abs(position - (-(baseWidth * 2)));
+      const duration = remainingDistance / speed;
 
-      if (nextPos < -(baseWidth * 2)) {
-        nextPos += baseWidth;
-        controls.set({ x: nextPos });
-      }
+      controls.start({
+        x: [position, -(baseWidth * 2)],
+        transition: {
+          duration,
+          ease: "linear",
+          onComplete: () => {
+            const resetPos = -baseWidth;
+            setPosition(resetPos);
+            controls.set({ x: resetPos });
+          }
+        }
+      });
+    };
 
-      setPosition(nextPos);
-      controls.start({ x: nextPos, transition: { type: "spring", stiffness: 300, damping: 35 } });
-    }, 4000);
+    startAnimation();
 
-    return () => clearInterval(interval);
+    return () => controls.stop();
   }, [position, isPaused, selectedId, baseWidth, images.length, controls]);
 
   const displayDesign = selectedId !== null ? displayImages[selectedId] : null;
