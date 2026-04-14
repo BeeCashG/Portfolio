@@ -1,90 +1,92 @@
 "use client";
 
 import { motion } from "framer-motion";
+import SkillSphere from "./SkillSphere";
 
-const leftSkills = [
-  { name: "HTML", level: 100 },
-  { name: "CSS", level: 90 },
-  { name: "JavaScript", level: 60 },
-  { name: "React.js", level: 55 },
-  { name: "Flutter", level: 60 },
-  { name: "Linux", level: 80 },
-  { name: "Ms Office", level: 85 },
+const categories = [
+  {
+    title: "Development Suite",
+    skills: ["React / Next.js", "Django / Python", "PHP / WordPress", "Flutter (Mobile)"],
+    color: "from-cyan-400 to-cyan-600"
+  },
+  {
+    title: "Strategic Impact",
+    skills: ["SEO Optimization", "Digital Strategy", "Brand Marketing", "CRM Personalization"],
+    color: "from-fuchsia-400 to-fuchsia-600"
+  },
+  {
+    title: "System Admin",
+    skills: ["Linux Server Management", "Security Auditing", "Graphics Design", "Network Systems"],
+    color: "from-indigo-400 to-indigo-600"
+  }
 ];
-
-const rightSkills = [
-  { name: "C/C++", level: 80 },
-  { name: "PHP", level: 70 },
-  { name: "WordPress/CMS", level: 80 },
-  { name: "Python", level: 45 },
-  { name: "Photoshop", level: 55 },
-  { name: "Django", level: 25 },
-  { name: "Java", level: 55 },
-];
-
-const SkillBar = ({ name, level, delay }: { name: string; level: number; delay: number }) => (
-  <div className="mb-8">
-    <div className="flex justify-between items-end mb-2">
-      <span className="font-semibold text-cyan-100 text-sm tracking-wide uppercase">{name}</span>
-      <span className="text-xs font-black text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]">{level}%</span>
-    </div>
-    <div className="h-2 w-full bg-black/50 border border-cyan-500/10 rounded-full overflow-hidden relative shadow-inner">
-      <motion.div
-        initial={{ width: 0 }}
-        whileInView={{ width: `${level}%` }}
-        viewport={{ once: true, margin: "-50px" }}
-        transition={{ duration: 1.2, delay, ease: [0.16, 1, 0.3, 1] }}
-        className="absolute top-0 left-0 h-full bg-gradient-to-r from-fuchsia-600 via-indigo-500 to-cyan-400 rounded-full shadow-[0_0_15px_rgba(34,211,238,0.8)]"
-      >
-        <div className="absolute top-1/2 right-0 -translate-y-1/2 translate-x-1/2 w-4 h-4 bg-cyan-200 blur-[6px] rounded-full" />
-      </motion.div>
-    </div>
-  </div>
-);
 
 export default function Skills() {
   return (
-    <section id="skills" className="relative w-full bg-[#09090b] text-white py-24 px-6 md:px-12 lg:px-24 border-t border-cyan-900/40 overflow-hidden">
-      <div className="max-w-6xl mx-auto">
+    <section id="skills" className="relative w-full bg-[#09090b] text-white py-24 px-6 md:px-12 lg:px-16 border-t border-cyan-900/40 overflow-hidden">
+      {/* Background Decorative Glow */}
+      <div className="absolute top-1/4 -left-20 w-96 h-96 bg-cyan-500/10 blur-[150px] rounded-full -z-10" />
+      <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-fuchsia-500/10 blur-[150px] rounded-full -z-10" />
+
+      <div className="max-w-7xl mx-auto">
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="mb-16"
+          className="mb-12 text-center md:text-left"
         >
-          <h2 className="text-4xl md:text-6xl font-black tracking-tighter mb-4 text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-fuchsia-500 drop-shadow-[0_0_15px_rgba(34,211,238,0.3)]">
-            Technical Arsenal
+          <h2 className="text-4xl md:text-6xl font-black tracking-tighter mb-4 text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-fuchsia-500 drop-shadow-[0_0_15px_rgba(34,211,238,0.3)]">
+            Technical Arsenal.
           </h2>
-          <div className="h-[1px] w-24 bg-gradient-to-r from-cyan-500/80 to-transparent mb-6" />
+          <p className="text-cyan-50/60 font-mono text-sm tracking-[0.2em] uppercase">Interactive 3D Skill Infrastructure</p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-24">
-          <motion.div 
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="flex flex-col bg-white/[0.01] border border-cyan-500/10 p-8 shadow-[0_0_40px_rgba(34,211,238,0.03)] rounded-3xl backdrop-blur-2xl relative overflow-hidden"
-          >
-            <div className="absolute top-0 left-0 w-64 h-64 bg-cyan-500/10 blur-[120px] rounded-full -z-10" />
-            {leftSkills.map((skill, index) => (
-              <SkillBar key={skill.name} name={skill.name} level={skill.level} delay={index * 0.1} />
-            ))}
-          </motion.div>
+        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+          {/* Left: 3D Holographic Sphere */}
+          <div className="w-full lg:w-3/5 order-2 lg:order-1 relative cursor-magnetic">
+             {/* Glow behind the sphere */}
+            <div className="absolute inset-0 bg-cyan-500/5 blur-[100px] rounded-full scale-75 animate-pulse" />
+            <SkillSphere />
+          </div>
 
-          <motion.div 
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="flex flex-col bg-white/[0.01] border border-fuchsia-500/10 p-8 shadow-[0_0_40px_rgba(217,70,239,0.03)] rounded-3xl backdrop-blur-2xl relative overflow-hidden"
-          >
-            <div className="absolute bottom-0 right-0 w-64 h-64 bg-fuchsia-500/10 blur-[120px] rounded-full -z-10" />
-            {rightSkills.map((skill, index) => (
-              <SkillBar key={skill.name} name={skill.name} level={skill.level} delay={index * 0.1} />
+          {/* Right: Structured Proficiencies */}
+          <div className="w-full lg:w-2/5 order-1 lg:order-2 space-y-6">
+            {categories.map((cat, idx) => (
+              <motion.div
+                key={cat.title}
+                initial={{ opacity: 0, x: 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: idx * 0.2 }}
+                className="group p-8 rounded-[2rem] bg-white/[0.02] border border-white/5 hover:border-cyan-500/30 transition-all duration-500 hover:shadow-[0_0_50px_rgba(34,211,238,0.05)] cursor-magnetic"
+              >
+                <h3 className={`text-transparent bg-clip-text bg-gradient-to-r ${cat.color} text-xs font-black uppercase tracking-[0.3em] mb-4`}>
+                  {cat.title}
+                </h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {cat.skills.map((s) => (
+                    <div key={s} className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-cyan-500" />
+                      <span className="text-white/80 text-sm font-medium tracking-tight">{s}</span>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
             ))}
-          </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 1 }}
+              className="p-6 rounded-[2rem] border border-dashed border-cyan-500/20 text-center"
+            >
+              <p className="text-[10px] text-cyan-400/60 uppercase tracking-widest font-mono">
+                Spin the holographic core to explore full stack.
+              </p>
+            </motion.div>
+          </div>
         </div>
       </div>
     </section>
