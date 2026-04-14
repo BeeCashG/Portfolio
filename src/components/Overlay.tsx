@@ -32,8 +32,8 @@ export default function Overlay() {
   return (
     <div className="absolute top-0 left-0 w-full h-full pointer-events-none z-10 font-sans">
       {/* Section 1: Intro */}
-      <div className="absolute top-[10vh] left-0 w-full flex justify-center px-6">
-        <ParallaxSection offsetY={-50}>
+      <div className="absolute top-[12vh] md:top-[16vh] left-0 w-full flex justify-center px-6">
+        <ParallaxSection offsetY={-40}>
           <div className="text-center relative">
             {/* Subtle glow behind text */}
             <div className="absolute inset-x-0 -inset-y-12 bg-cyan-900/30 blur-[100px] rounded-full -z-10" />
@@ -42,25 +42,47 @@ export default function Overlay() {
               initial={{ filter: "blur(10px)", opacity: 0, y: 20 }}
               animate={{ filter: "blur(0px)", opacity: 1, y: 0 }}
               transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-              className="text-6xl md:text-8xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-white via-cyan-100 to-cyan-500 mb-6 drop-shadow-[0_0_20px_rgba(34,211,238,0.4)]"
+              className="text-5xl md:text-8xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-white via-cyan-100 to-cyan-500 mb-6 drop-shadow-[0_0_20px_rgba(34,211,238,0.4)] leading-[1.1]"
             >
               Er. Bikash Gupta
             </motion.h1>
+            
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5, duration: 1 }}
-              className="flex flex-wrap items-center justify-center gap-3 md:gap-6 text-sm md:text-lg text-cyan-50 font-light tracking-widest uppercase"
+              className="flex flex-wrap items-center justify-center gap-y-3 gap-x-4 md:gap-x-6 text-[10px] md:text-lg text-cyan-50 font-medium md:font-light tracking-[0.15em] md:tracking-widest uppercase"
             >
-              <span>Digital Strategist</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.8)]" />
-              <span>Professor</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-fuchsia-500 shadow-[0_0_10px_rgba(217,70,239,0.8)]" />
+              <div className="flex items-center gap-4">
+                <span>Digital Strategist</span>
+                <div className="w-1 h-1 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
+              </div>
+              <div className="flex items-center gap-4">
+                <span>Professor</span>
+                <div className="w-1 h-1 rounded-full bg-fuchsia-500 shadow-[0_0_10px_rgba(217,70,239,0.8)]" />
+              </div>
               <span>Full-Stack Developer</span>
             </motion.div>
           </div>
         </ParallaxSection>
       </div>
+
+      {/* Scroll Indicator */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.5, duration: 1 }}
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 pointer-events-none"
+      >
+        <span className="text-cyan-400 font-mono text-[9px] uppercase tracking-[0.4em] animate-pulse drop-shadow-[0_0_5px_rgba(34,211,238,0.5)]">
+          Scroll to Explore
+        </span>
+        <motion.div 
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+          className="w-[1px] h-14 bg-gradient-to-b from-cyan-400 via-cyan-400/50 to-transparent shadow-[0_0_8px_rgba(34,211,238,0.3)]"
+        />
+      </motion.div>
 
       {/* Section 2: Summary */}
       <div className="absolute top-[150vh] left-0 w-full flex justify-center px-6 md:px-16 lg:px-32">

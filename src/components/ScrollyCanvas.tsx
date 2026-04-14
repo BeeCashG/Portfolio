@@ -103,6 +103,8 @@ export default function ScrollyCanvas() {
           </div>
         )}
         <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
+        {/* Subtle Bottom Vignette for Contrast */}
+        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#09090b] to-transparent z-10 pointer-events-none" />
       </div>
       <Overlay />
     </div>
