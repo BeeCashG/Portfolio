@@ -61,7 +61,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} bg-[#121212] text-white antialiased overflow-x-hidden selection:bg-cyan-500/30 selection:text-white`}>
+    <html lang="en" className={`${inter.variable} bg-[#121212] text-white antialiased selection:bg-cyan-500/30 selection:text-white`}>
       <body className="min-h-full flex flex-col cursor-none lg:cursor-none">
         {children}
         <Cursor />

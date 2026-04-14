@@ -91,7 +91,7 @@ const GalleryCard = ({ image, index, x, totalImages, cardWidth, onClick }: Galle
     >
       {/* Dynamic Neon Border Glow */}
       <motion.div 
-        style={{ opacity: glowOpacity }}
+        style={{ opacity: mounted ? glowOpacity : 0 }}
         className="absolute inset-0 border-[2px] border-cyan-500/40 shadow-[0_0_30px_rgba(6,182,212,0.3)] z-10 pointer-events-none rounded-[2rem]"
       />
       
