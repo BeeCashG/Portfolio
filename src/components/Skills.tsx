@@ -1,154 +1,147 @@
 "use client";
 
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
+import { useRef } from "react";
 
-const skillCategories = [
+const pillars = [
   {
-    title: "STRATEGIC INFRASTRUCTURE",
-    id: "SI-01",
-    description: "Multi-channel digital ecosystem design. Focused on brand architecture, growth modeling, and CRM automation.",
-    skills: ["SEO Mastery", "Growth Hacking", "Market Analytics", "Personalization Engine"],
-    stats: ["99.8% ACCURACY", "STRATEGIC ADAPTATION", "EXEC-LEVEL REPORTING"]
+    title: "STRATEGY",
+    subtitle: "Digital Ecosystems",
+    description: "Designing high-performance growth models, CRM-driven automation, and authoritative brand architectures.",
+    skills: ["SEO Mastery", "Growth Analytics", "Brand Strategy", "CRM Automation"],
+    accent: "from-cyan-400 to-blue-600",
+    glow: "rgba(34, 211, 238, 0.3)"
   },
   {
-    title: "FULL-STACK ENGINEERING",
-    id: "FE-02",
-    description: "Designing resilient, high-performance web systems with clean, scalable technical logic.",
-    skills: ["Next.js / React", "Django / Python", "PHP / WordPress", "Node.js Architecture"],
-    stats: ["LOW-LATENCY LOGIC", "RESILIENT SCALING", "PIXEL-PERFECT UX"]
+    title: "ENGINEER",
+    subtitle: "System Logic",
+    description: "Engineering resilient, full-stack web applications with localized performance and pixel-perfect fluidity.",
+    skills: ["React / Next.js", "Python / Django", "PHP / Node.js", "Cloud Systems"],
+    accent: "from-fuchsia-400 to-purple-600",
+    glow: "rgba(217, 70, 239, 0.3)"
   },
   {
-    title: "SYSTEM ARCHITECTURE",
-    id: "SA-03",
-    description: "Robust enterprise foundations, security auditing, and server-side deployment strategies.",
-    skills: ["Linux Management", "Security Auditing", "Graphics Design", "Network Security"],
-    stats: ["ZERO-DOWNTIME CONFIG", "ISO-COMPLIANCE", "SYSTEM OPTIMIZATION"]
+    title: "SYSTEMS",
+    subtitle: "Architecture",
+    description: "Securing the digital foundation through specialized server management and deep technical auditing.",
+    skills: ["Linux Server", "Cyber Security", "Network Admin", "Graphic Design"],
+    accent: "from-amber-400 to-orange-500",
+    glow: "rgba(251, 191, 36, 0.3)"
   }
 ];
 
-const BlueprintRow = ({ cat, scrollYProgress, index }: { cat: typeof skillCategories[0]; scrollYProgress: any; index: number }) => {
-  // Calculate relative activation based on scroll
-  const step = 1 / skillCategories.length;
-  const start = index * step;
-  const end = (index + 1) * step;
-  
-  const opacity = useTransform(scrollYProgress, [start, start + 0.1, end - 0.1, end], [0.1, 1, 1, 0.1]);
-  const scale = useTransform(scrollYProgress, [start, start + 0.1, end - 0.1, end], [0.95, 1, 1, 0.95]);
+const ParallaxCard = ({ pillar, index }: { pillar: typeof pillars[0]; index: number }) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"]
+  });
+
+  // Multilayer Parallax Offsets
+  const yBg = useTransform(scrollYProgress, [0, 1], [-100, 100]);
+  const yText = useTransform(scrollYProgress, [0, 1], [-50, 50]);
+  const yPills = useTransform(scrollYProgress, [0, 1], [30, -30]);
+  const rotateX = useTransform(scrollYProgress, [0, 0.5, 1], [5, 0, -5]);
+  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
 
   return (
     <motion.div 
-      style={{ opacity, scale }}
-      className="h-[80vh] flex flex-col justify-center relative z-10"
+      ref={ref}
+      style={{ opacity, perspective: 1000 }}
+      className="h-[80vh] flex items-center justify-center p-6 md:p-12 relative overflow-hidden mb-12"
     >
-      <div className="flex items-start gap-8">
-        <div className="hidden md:flex flex-col items-end pt-2">
-            <span className="text-cyan-500 font-mono text-xs font-bold leading-none mb-1">{cat.id}</span>
-            <div className="h-px w-8 bg-cyan-500/30" />
-        </div>
+      <motion.div 
+        style={{ rotateX }}
+        className="w-full max-w-6xl h-full relative flex flex-col justify-center rounded-[3rem] bg-white/[0.02] border border-white/5 overflow-hidden group p-10 md:p-20 shadow-2xl"
+      >
+        {/* Background Parallax Layer (Glow/Gradient) */}
+        <motion.div 
+          style={{ y: yBg }}
+          className={`absolute -top-1/2 -left-1/2 w-[200%] h-[200%] bg-gradient-to-br ${pillar.accent} opacity-[0.03] blur-[120px] pointer-events-none z-0`}
+        />
 
-        <div className="flex-1">
-          <div className="mb-6">
-            <h3 className="text-5xl md:text-8xl font-black tracking-tighter text-white mb-2 leading-none uppercase italic">
-              {cat.title}
-            </h3>
-            <p className="text-white/40 font-mono text-[10px] md:text-xs uppercase tracking-[0.3em] mb-4">
-              [ {cat.description} ]
-            </p>
-          </div>
+        {/* Midground Layer (Pills & Decals) */}
+        <motion.div 
+          style={{ y: yPills }}
+          className="absolute top-1/2 left-0 w-full flex flex-wrap justify-center gap-4 px-12 z-0 opacity-20 pointer-events-none"
+        >
+          {pillar.skills.map(s => (
+            <span key={s} className="text-4xl md:text-6xl font-black uppercase tracking-tighter text-white/10">{s}</span>
+          ))}
+        </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {cat.skills.map((skill) => (
-              <div key={skill} className="group relative px-6 py-4 border border-white/5 bg-white/[0.01] hover:bg-cyan-500/5 hover:border-cyan-500/30 transition-all duration-300">
-                  <div className="absolute top-0 left-0 w-1 h-1 bg-cyan-500/40" />
-                  <span className="text-white/60 group-hover:text-cyan-400 font-bold text-sm tracking-tight transition-colors">{skill}</span>
-                  <div className="mt-2 h-[1px] w-0 group-hover:w-full bg-cyan-500/50 transition-all duration-500" />
+        {/* Foreground Content Layer */}
+        <motion.div style={{ y: yText }} className="relative z-10 flex flex-col items-center text-center">
+          <div className={`mb-6 px-4 py-1 rounded-full bg-gradient-to-r ${pillar.accent} opacity-20`} />
+          <span className="text-cyan-400 font-mono text-[10px] md:text-xs uppercase tracking-[0.5em] mb-4">{pillar.subtitle}</span>
+          <h3 className={`text-6xl md:text-9xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-br ${pillar.accent} mb-8 uppercase italic leading-none`}>
+            {pillar.title}.
+          </h3>
+          <p className="text-white/40 text-sm md:text-lg leading-relaxed max-w-2xl mb-12">
+            {pillar.description}
+          </p>
+
+          <div className="flex flex-wrap justify-center gap-3">
+            {pillar.skills.map((s) => (
+              <div key={s} className="group/pill relative px-6 py-2 rounded-full border border-white/10 bg-white/[0.02] hover:border-cyan-500/50 transition-all duration-300 overflow-hidden cursor-magnetic">
+                <div className="absolute inset-0 bg-white/5 opacity-0 group-hover/pill:opacity-100 transition-opacity" />
+                <span className="relative z-10 text-xs md:text-sm font-bold uppercase tracking-widest text-white/60 group-hover/pill:text-white transition-colors">{s}</span>
               </div>
             ))}
           </div>
+        </motion.div>
 
-          <div className="mt-12 flex flex-wrap gap-8 opacity-30 group-hover:opacity-100 transition-opacity">
-             {cat.stats.map(s => (
-               <div key={s} className="flex flex-col">
-                  <span className="text-[9px] font-mono text-cyan-500 mb-1">{">>>"} PROCESSING</span>
-                  <span className="text-[10px] font-mono text-white tracking-widest uppercase">{s}</span>
-               </div>
-             ))}
-          </div>
-        </div>
-      </div>
+        {/* Interactive Border Tracer (Side Decal) */}
+        <div className="absolute left-10 top-1/4 bottom-1/4 w-[1px] bg-gradient-to-b from-transparent via-white/10 to-transparent" />
+        <div className="absolute right-10 top-1/4 bottom-1/4 w-[1px] bg-gradient-to-b from-transparent via-white/10 to-transparent" />
+      </motion.div>
     </motion.div>
   );
 };
 
 export default function Skills() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"]
-  });
-
-  // Smooth Laser Animation
-  const laserY = useSpring(useTransform(scrollYProgress, [0, 1], ["0%", "100%"]), {
-    stiffness: 100,
-    damping: 30
-  });
-
   return (
-    <section 
-      ref={containerRef}
-      id="skills" 
-      className="relative bg-[#09090b] text-white overflow-visible px-6 md:px-12 lg:px-24 border-t border-white/5"
-    >
-      {/* Blueprint Grid Layer */}
-      <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.03]">
-          <div className="absolute inset-0" style={{ backgroundImage: "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
-          <div className="absolute inset-0" style={{ backgroundImage: "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)", backgroundSize: "200px 200px", border: "1px solid rgba(255,255,255,0.1)" }} />
+    <section id="skills" className="relative w-full bg-[#09090b] text-white py-32 overflow-hidden border-t border-white/5">
+      {/* Background Atmosphere */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/5 blur-[150px] rounded-full" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-fuchsia-500/5 blur-[150px] rounded-full" />
       </div>
 
-      {/* Aesthetic Technical Markers */}
-      <div className="absolute top-12 left-12 font-mono text-[9px] text-white/20 select-none uppercase z-0 tracking-[0.5em]">
-          Technical Arsenal // ID_7734_BGU
-      </div>
-      <div className="absolute bottom-12 right-12 font-mono text-[9px] text-white/20 select-none uppercase z-0 tracking-[0.5em] text-right">
-          Grid: 40x40 // Reference: Bikash Gupta
-      </div>
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1 }}
+          className="mb-32 text-center"
+        >
+          <div className="overflow-hidden mb-4">
+            <motion.h2 
+              initial={{ y: 100 }}
+              whileInView={{ y: 0 }}
+              className="text-5xl md:text-8xl font-black tracking-tighter"
+            >
+              TECHNICAL <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-white/40 italic">ARSENAL.</span>
+            </motion.h2>
+          </div>
+          <div className="h-[2px] w-24 bg-cyan-500 mx-auto opacity-50 shadow-[0_0_15px_rgba(34,211,238,0.5)]" />
+        </motion.div>
 
-      <div className="max-w-7xl mx-auto relative min-h-[300vh]">
-        {/* Sticky Laser Engine */}
-        <div className="sticky top-0 h-screen w-full flex items-center pointer-events-none z-50">
-           <motion.div 
-             style={{ top: laserY }}
-             className="absolute left-[-100px] right-[-100px] h-[2px] bg-cyan-400 shadow-[0_0_25px_rgba(34,211,238,0.8),0_0_10px_rgba(34,211,238,0.5)] flex items-center justify-between px-24 mix-blend-screen"
-           >
-              <div className="absolute top-1/2 left-0 -translate-y-1/2 flex items-center gap-2">
-                <div className="w-4 h-4 rounded-full bg-cyan-400 blur-[4px] animate-pulse" />
-                <span className="font-mono text-[8px] text-cyan-400 tracking-tighter uppercase">Scanning...</span>
-              </div>
-              
-              <div className="absolute top-1/2 right-0 -translate-y-1/2 flex items-center gap-2">
-                <span className="font-mono text-[8px] text-cyan-400 tracking-tighter uppercase whitespace-nowrap">Depth: {Math.round(Math.random() * 100)}m.sec</span>
-                <div className="w-4 h-4 rounded-full bg-cyan-400 blur-[4px] animate-pulse" />
-              </div>
-           </motion.div>
-        </div>
-
-        {/* Content Layers */}
-        <div className="relative pt-[20vh]">
-          {skillCategories.map((cat, index) => (
-            <BlueprintRow 
-              key={cat.id} 
-              cat={cat} 
-              scrollYProgress={scrollYProgress} 
-              index={index} 
+        <div className="space-y-24">
+          {pillars.map((pillar, idx) => (
+            <ParallaxCard 
+              key={pillar.title} 
+              pillar={pillar} 
+              index={idx} 
             />
           ))}
         </div>
       </div>
 
-      {/* Decorative End Piece */}
-      <div className="max-w-7xl mx-auto py-24 border-t border-dashed border-white/10 text-center">
-          <p className="text-[10px] font-mono text-white/20 uppercase tracking-[1em]">END OF SYSTEM READOUT</p>
+      {/* Aesthetic Section Closer */}
+      <div className="max-w-7xl mx-auto text-center py-24 border-t border-dashed border-white/5">
+        <p className="text-[10px] font-mono text-white/10 uppercase tracking-[1em]">SYSTEM READOUT COMPLETE</p>
       </div>
     </section>
   );
