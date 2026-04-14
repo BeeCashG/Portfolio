@@ -1,87 +1,107 @@
 "use client";
 
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
+import { useRef } from "react";
 
-const skillPillars = [
+const slides = [
   {
-    category: "STRATEGY",
-    headline: "Full-Cycle Digital Growth.",
-    description: "Designing resilient high-conversion ecosystems through authoritative brand architecture and data-driven CRM automation.",
-    skills: ["SEO Mastery", "Growth Analytics", "Brand Strategy", "Marketing Automation", "Digital Ecosystems"]
+    id: "01",
+    title: "STRATEGY.",
+    subtitle: "Digital Growth Infrastructure",
+    description: "Designing high-conversion digital ecosystems through data-driven SEO, brand engineering, and strategic content flows.",
+    skills: ["SEO Mastery", "Brand Strategy", "Growth Analytics", "Automation"],
+    accent: "text-cyan-400",
+    bgClass: "bg-cyan-500/5"
   },
   {
-    category: "ENGINEER",
-    headline: "Systematic Web Infrastructure.",
-    description: "Building high-performance, full-stack applications with localized logic and fluid, pixel-perfect user interfaces.",
-    skills: ["React / Next.js", "Python / Django", "PHP / Node.js", "Cloud Engineering", "Full-Stack Ops"]
+    id: "02",
+    title: "ENGINEER.",
+    subtitle: "System Logic & Web Scaling",
+    description: "Building resilient, full-stack applications with localized performance and pixel-perfect technical fluidity.",
+    skills: ["Next.js / React", "Django / Python", "PHP / WordPress", "Node.js"],
+    accent: "text-fuchsia-400",
+    bgClass: "bg-fuchsia-500/5"
   },
   {
-    category: "ECOSYSTEM",
-    headline: "Secure Technical Foundation.",
-    description: "Securing and optimizing digital assets through deep system auditing and specialized server management.",
-    skills: ["Linux Server", "Cyber Security", "Network Admin", "Graphic Design", "Technical Auditing"]
+    id: "03",
+    title: "ECOSYSTEM.",
+    subtitle: "Enterprise Technical Security",
+    description: "Securing and optimizing digital foundations through specialized server management and technical auditing.",
+    skills: ["Linux Server", "Cyber Security", "Network Admin", "Graphic Design"],
+    accent: "text-amber-400",
+    bgClass: "bg-amber-500/5"
   }
 ];
 
-const LiquidBlob = ({ color, index, scrollYProgress }: { color: string; index: number; scrollYProgress: any }) => {
-  // Diverse movement patterns for each blob
-  const x = useTransform(scrollYProgress, [0, 1], [
-    (index % 2 === 0 ? -10 : 10) + "%", 
-    (index % 2 === 0 ? 110 : -10) + "%"
-  ]);
-  const y = useTransform(scrollYProgress, [0, 1], [
-    (index < 2 ? -10 : 110) + "%", 
-    (index < 2 ? 110 : -10) + "%"
-  ]);
-  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1.5, 1]);
-  const rotate = useTransform(scrollYProgress, [0, 1], [0, 360]);
-
-  return (
-    <motion.div
-      style={{
-        x,
-        y,
-        scale,
-        rotate,
-        backgroundColor: color,
-        filter: "blur(80px)",
-      }}
-      className="absolute w-[40vw] h-[40vw] rounded-full opacity-[0.15] mix-blend-screen"
-    />
-  );
-};
-
-const SkillSection = ({ pillar, index, scrollYProgress }: { pillar: typeof skillPillars[0]; index: number; scrollYProgress: any }) => {
-  const step = 1 / skillPillars.length;
-  const start = index * step;
-  const end = (index + 1) * step;
-
-  const opacity = useTransform(scrollYProgress, [start, start + 0.1, end - 0.1, end], [0, 1, 1, 0]);
-  const y = useTransform(scrollYProgress, [start, start + 0.1, end - 0.1, end], [50, 0, 0, -50]);
+const BackgroundAsset = ({ id, progress }: { id: string; progress: any }) => {
+  const opacity = useTransform(progress, [0, 0.4, 0.6, 1], [0, 1, 1, 0]);
+  const scale = useTransform(progress, [0, 0.5, 1], [0.8, 1, 1.2]);
+  const rotate = useTransform(progress, [0, 1], [0, 20]);
 
   return (
     <motion.div 
-      style={{ opacity, y }}
-      className="h-[80vh] flex flex-col items-center justify-center text-center px-6"
+      style={{ opacity, scale, rotate }}
+      className="absolute inset-0 flex items-center justify-center pointer-events-none"
     >
-      <span className="text-cyan-400 font-mono text-xs md:text-sm uppercase tracking-[0.6em] mb-6">
-        {pillar.category}
-      </span>
-      <h3 className="text-5xl md:text-8xl lg:text-9xl font-black tracking-tighter text-white mb-8 leading-none">
-        {pillar.headline}
-      </h3>
-      <p className="text-white/40 text-sm md:text-xl max-w-3xl leading-relaxed mb-12 font-medium">
-        {pillar.description}
-      </p>
-      <div className="flex flex-wrap justify-center gap-x-8 gap-y-4 max-w-4xl">
-        {pillar.skills.map(s => (
-          <span key={s} className="text-white/60 font-bold text-sm md:text-xl uppercase tracking-widest hover:text-cyan-400 transition-colors cursor-default">
-            {s}
-          </span>
-        ))}
-      </div>
+      {id === "01" && (
+        <div className="w-[60vh] h-[60vh] rounded-full border border-cyan-500/20 relative group">
+           <div className="absolute inset-0 rounded-full border border-dashed border-cyan-400/40 animate-[spin_60s_linear_infinite]" />
+           <div className="absolute inset-10 rounded-full border border-cyan-400/10 animate-[spin_40s_linear_infinite_reverse]" />
+           <div className="absolute inset-0 bg-cyan-500/5 blur-[100px] rounded-full" />
+        </div>
+      )}
+      {id === "02" && (
+        <div className="w-full h-full flex flex-wrap gap-4 opacity-10 py-24 px-12">
+           {Array.from({ length: 40 }).map((_, i) => (
+             <div key={i} className="w-[1px] h-full bg-gradient-to-b from-transparent via-fuchsia-500 to-transparent" />
+           ))}
+        </div>
+      )}
+      {id === "03" && (
+        <div className="w-[80vw] h-[80vh] border border-amber-500/20 relative overflow-hidden">
+           <div className="absolute top-0 left-0 w-full h-[2px] bg-amber-400/40 animate-[scan_4s_ease-in-out_infinite]" />
+           <div className="absolute inset-0" style={{ backgroundImage: "radial-gradient(circle, rgba(251,191,36,0.05) 1px, transparent 1px)", backgroundSize: "30px 30px" }} />
+        </div>
+      )}
     </motion.div>
+  );
+};
+
+const Slide = ({ slide, index, scrollYProgress }: { slide: typeof slides[0]; index: number; scrollYProgress: any }) => {
+  const step = 1 / slides.length;
+  const start = index * step;
+  const end = (index + 1) * step;
+
+  const y = useTransform(scrollYProgress, [start, start + 0.1, end - 0.1, end], [100, 0, 0, -100]);
+  const opacity = useTransform(scrollYProgress, [start, start + 0.05, end - 0.05, end], [0, 1, 1, 0]);
+
+  return (
+    <div className="h-screen w-full flex items-center justify-center relative">
+      <motion.div style={{ y, opacity }} className="max-w-6xl w-full px-6 flex flex-col md:flex-row items-center gap-12 md:gap-24">
+        <div className="flex-1 text-center md:text-left">
+          <div className="flex items-center justify-center md:justify-start gap-4 mb-6">
+            <span className={`text-sm font-mono tracking-[0.5em] ${slide.accent}`}>SECTION_{slide.id}</span>
+            <div className="h-[1px] w-12 bg-white/20" />
+          </div>
+          <h3 className="text-6xl md:text-9xl font-black tracking-tighter text-white mb-6 leading-none italic uppercase">
+            {slide.title}
+          </h3>
+          <p className="text-xl md:text-2xl font-bold text-white/80 mb-6 tracking-tight">
+            {slide.subtitle}
+          </p>
+          <p className="text-white/40 text-sm md:text-lg leading-relaxed max-w-xl mb-12 font-medium">
+            {slide.description}
+          </p>
+          <div className="flex flex-wrap justify-center md:justify-start gap-3">
+             {slide.skills.map(s => (
+               <span key={s} className="px-5 py-2 rounded-full border border-white/10 bg-white/5 text-[10px] md:text-xs font-black uppercase tracking-widest text-white/60 hover:text-white transition-colors cursor-default">
+                 {s}
+               </span>
+             ))}
+          </div>
+        </div>
+      </motion.div>
+    </div>
   );
 };
 
@@ -92,61 +112,65 @@ export default function Skills() {
     offset: ["start start", "end end"]
   });
 
-  const blobColors = ["#22d3ee", "#d946ef", "#6366f1", "#0891b2"];
-
   return (
     <section 
       ref={containerRef}
       id="skills" 
       className="relative bg-[#09090b] text-white overflow-visible border-t border-white/5"
     >
-      {/* Liquid Canvas Layer */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden pointer-events-none z-0">
-        <div className="absolute inset-0 bg-[#09090b]" />
-        {blobColors.map((color, i) => (
-          <LiquidBlob 
-            key={i} 
-            color={color} 
-            index={i} 
-            scrollYProgress={scrollYProgress} 
-          />
-        ))}
-        {/* Grain Overlay */}
-        <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('/noise.png')] mix-blend-overlay" />
+      {/* Introduction Heading */}
+      <div className="h-[30vh] flex flex-col items-center justify-end pb-12">
+          <motion.h2 
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            className="text-xs font-mono uppercase tracking-[1em] text-white/30 mb-4"
+          >
+            Technical Capability
+          </motion.h2>
+          <h2 className="text-4xl md:text-7xl font-black tracking-tighter text-white uppercase italic text-center">
+            THE <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-white/20">ARSENAL.</span>
+          </h2>
       </div>
 
-      <div className="max-w-7xl mx-auto relative z-10 min-h-[400vh]">
-        {/* Intro */}
-        <div className="h-[50vh] flex flex-col items-center justify-end pb-24">
-           <motion.h2 
-             initial={{ opacity: 0 }}
-             whileInView={{ opacity: 1 }}
-             className="text-xs font-mono uppercase tracking-[1em] text-white/20 mb-4"
-           >
-             The Expertise
-           </motion.h2>
-           <h2 className="text-5xl md:text-8xl font-black tracking-tighter text-white uppercase italic">
-             Technical Arsenal.
-           </h2>
+      <div className="relative min-h-[300vh]">
+        {/* Sticky Background Asset Engine */}
+        <div className="sticky top-0 h-screen w-full overflow-hidden z-0">
+          {slides.map((slide, index) => (
+            <BackgroundAsset 
+              key={slide.id} 
+              id={slide.id} 
+              progress={scrollYProgress}
+            />
+          ))}
+          {/* Subtle Grain Overlay */}
+          <div className="absolute inset-0 opacity-[0.02] pointer-events-none bg-[url('/noise.png')] mix-blend-overlay" />
         </div>
 
-        {/* Dynamic Pillar Sections */}
-        <div className="relative">
-          {skillPillars.map((pillar, index) => (
-            <SkillSection 
-              key={pillar.category} 
-              pillar={pillar} 
+        {/* Cinematic Slides Layer */}
+        <div className="relative z-10">
+          {slides.map((slide, index) => (
+            <Slide 
+              key={slide.id} 
+              slide={slide} 
               index={index} 
-              scrollYProgress={scrollYProgress}
+              scrollYProgress={scrollYProgress} 
             />
           ))}
         </div>
-
-        {/* Outro */}
-        <div className="h-[50vh] flex items-center justify-center">
-            <p className="text-[10px] font-mono text-white/10 uppercase tracking-[1em]">Execution. Impact. Scale.</p>
-        </div>
       </div>
+
+      {/* Outro */}
+      <div className="h-[30vh] flex items-center justify-center">
+          <p className="text-[10px] font-mono text-white/10 uppercase tracking-[1em]">END OF SYSTEM READOUT</p>
+      </div>
+
+      <style jsx global>{`
+        @keyframes scan {
+          0% { top: 0; opacity: 0; }
+          50% { opacity: 1; }
+          100% { top: 100%; opacity: 0; }
+        }
+      `}</style>
     </section>
   );
 }
