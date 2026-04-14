@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Cursor from "@/components/Cursor";
+import ChatBot from "@/components/ChatBot";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -55,8 +56,7 @@ export const metadata: Metadata = {
   },
 };
 
-import Cursor from "@/components/Cursor";
-import ChatBot from "@/components/ChatBot";
+
 
 export default function RootLayout({
   children,
