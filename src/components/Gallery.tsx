@@ -82,7 +82,7 @@ const GalleryCard = ({ image, index, x, totalImages, cardWidth, onClick }: Galle
       className="relative rounded-[2rem] overflow-hidden border border-white/5 bg-zinc-900/40 group backdrop-blur-xl shrink-0 cursor-pointer"
       style={{ 
         width: cardInnerWidth,
-        height: typeof window !== 'undefined' && window.innerWidth < 768 ? 360 : 460 
+        height: cardInnerWidth
       }}
     >
       {/* Dynamic Neon Border Glow */}
