@@ -38,6 +38,7 @@ export default function Navbar() {
 
   return (
     <motion.nav 
+      aria-label="Main Navigation"
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: isVisible ? 0 : -100, opacity: isVisible ? 1 : 0 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}

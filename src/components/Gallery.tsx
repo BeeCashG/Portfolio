@@ -94,7 +94,7 @@ const GalleryCard = ({ image, index, x, totalImages, cardWidth, onClick }: Galle
         <motion.img 
           layoutId={`img-gallery-${index}`}
           src={image} 
-          alt={`Design ${index}`}
+          alt={`Er. Bikash Gupta Creative Project - Design Showcase #${(index % totalImages) + 1}`}
           className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
         />
       </motion.div>

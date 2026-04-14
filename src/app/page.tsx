@@ -23,8 +23,26 @@ export default async function Home() {
     console.error("Error reading gallery directory:", error);
   }
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: "Er. Bikash Gupta",
+    url: "https://bikashgupta.com",
+    jobTitle: "Creative Developer & Digital Strategist",
+    description: "Experienced Digital Marketing Strategist, Professor, and Full-Stack Developer shaping modern web experiences with code and strategy.",
+    image: "https://bikashgupta.com/gallery/asset1.jpg",
+    sameAs: [
+      "https://github.com/BeeCashG",
+      "https://www.bikashgupta.com"
+    ]
+  };
+
   return (
     <main id="home" className="min-h-screen bg-[#09090b] font-sans relative">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Navbar />
       <ScrollyCanvas />
       <Skills />
