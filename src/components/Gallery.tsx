@@ -12,6 +12,7 @@ interface GalleryCardProps {
   index: number;
   x: any;
   totalImages: number;
+  cardWidth: number;
   onClick: () => void;
 }
 
@@ -77,13 +78,11 @@ const GalleryCard = ({ image, index, x, totalImages, cardWidth, onClick }: Galle
         z,
         filter: `${grayscale} ${brightness}`,
         perspective: "1000px",
-        transformStyle: "preserve-3d"
-      }}
-      className="relative rounded-[2rem] overflow-hidden border border-white/5 bg-zinc-900/40 group backdrop-blur-xl shrink-0 cursor-pointer"
-      style={{ 
+        transformStyle: "preserve-3d",
         width: cardInnerWidth,
         height: cardInnerWidth
       }}
+      className="relative rounded-[2rem] overflow-hidden border border-white/5 bg-zinc-900/40 group backdrop-blur-xl shrink-0 cursor-pointer"
     >
       {/* Dynamic Neon Border Glow */}
       <motion.div 
