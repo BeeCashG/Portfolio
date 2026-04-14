@@ -182,27 +182,32 @@ export default function Gallery({ images = [] }: GalleryProps) {
       return;
     }
 
-    const startAnimation = () => {
+    const speed = 40; // Pixels per second
+
+    const animateLoop = async () => {
       const currentX = x.get();
-      const speed = 40; // Pixels per second
-      const remainingDistance = Math.abs(currentX - (-(baseWidth * 2)));
+      const targetX = -(baseWidth * 2);
+      const remainingDistance = Math.abs(currentX - targetX);
       const duration = remainingDistance / speed;
 
-      controls.start({
-        x: [currentX, -(baseWidth * 2)],
+      await controls.start({
+        x: targetX,
         transition: {
           duration,
-          ease: "linear",
-          onComplete: () => {
-            const resetPos = -baseWidth;
-            x.set(resetPos);
-            controls.set({ x: resetPos });
-          }
+          ease: "linear"
         }
       });
+
+      // Seamlessly reset and continue
+      const resetPos = -baseWidth;
+      x.set(resetPos);
+      controls.set({ x: resetPos });
+      
+      // Trigger next cycle
+      animateLoop();
     };
 
-    startAnimation();
+    animateLoop();
 
     return () => controls.stop();
   }, [isPaused, selectedId, baseWidth, images.length, controls, x]);
