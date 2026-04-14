@@ -1,11 +1,77 @@
 "use client";
 
-import { motion, useAnimation, AnimatePresence } from "framer-motion";
+import { motion, useAnimation, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
 import { useState, useRef, useEffect, useMemo } from "react";
 
 interface GalleryProps {
   images?: string[];
 }
+
+interface GalleryCardProps {
+  image: string;
+  index: number;
+  x: any;
+  totalImages: number;
+  onClick: () => void;
+}
+
+const GalleryCard = ({ image, index, x, totalImages, onClick }: GalleryCardProps) => {
+  const cardWidth = 320 + 24;
+  const initialOffset = index * cardWidth;
+  
+  // High-fidelity transform logic:
+  // We calculate the center of the card relative to the center of the screen
+  // And apply a washout effect (blur, grayscale, opacity) as it moves away.
+  const scale = useTransform(x, (latest: number) => {
+    const centerOfCard = latest + initialOffset + 160;
+    const centerOfScreen = typeof window !== 'undefined' ? window.innerWidth / 2 : 500;
+    const distance = Math.abs(centerOfCard - centerOfScreen);
+    return Math.max(0.85, 1.1 - (distance / 1000));
+  });
+
+  const opacity = useTransform(x, (latest: number) => {
+    const centerOfCard = latest + initialOffset + 160;
+    const centerOfScreen = typeof window !== 'undefined' ? window.innerWidth / 2 : 500;
+    const distance = Math.abs(centerOfCard - centerOfScreen);
+    return Math.max(0.3, 1 - (distance / 600));
+  });
+
+  const grayscale = useTransform(x, (latest: number) => {
+    const centerOfCard = latest + initialOffset + 160;
+    const centerOfScreen = typeof window !== 'undefined' ? window.innerWidth / 2 : 500;
+    const distance = Math.abs(centerOfCard - centerOfScreen);
+    const amount = Math.min(100, (distance / 300) * 100);
+    return `grayscale(${amount}%)`;
+  });
+
+  const brightness = useTransform(x, (latest: number) => {
+    const centerOfCard = latest + initialOffset + 160;
+    const centerOfScreen = typeof window !== 'undefined' ? window.innerWidth / 2 : 500;
+    const distance = Math.abs(centerOfCard - centerOfScreen);
+    const amount = Math.max(0.8, 1.2 - (distance / 500));
+    return `brightness(${amount})`;
+  });
+
+  return (
+    <motion.div
+      layoutId={`card-gallery-${index}`}
+      onClick={onClick}
+      style={{ scale, opacity, filter: `${grayscale} ${brightness}` }}
+      className="relative min-w-[260px] md:min-w-[320px] h-[340px] md:h-[420px] rounded-[1.5rem] overflow-hidden border border-white/5 bg-zinc-900/50 group backdrop-blur-sm shrink-0 cursor-pointer transition-shadow"
+    >
+      <motion.img 
+        layoutId={`img-gallery-${index}`}
+        src={image} 
+        alt={`Design ${index}`}
+        className="w-full h-full object-cover transition-all duration-700"
+      />
+      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-6 opacity-0 group-hover:opacity-100 transition-opacity">
+        <span className="text-fuchsia-400 font-mono text-[10px] uppercase font-bold tracking-widest">Asset #{(index % totalImages) + 1}</span>
+      </div>
+      <div className="absolute inset-0 border-[1px] border-white/5 rounded-[1.5rem] pointer-events-none group-hover:border-fuchsia-500/20 transition-colors duration-500" />
+    </motion.div>
+  );
+};
 
 export default function Gallery({ images = [] }: GalleryProps) {
   const [selectedId, setSelectedId] = useState<number | null>(null);
@@ -15,6 +81,12 @@ export default function Gallery({ images = [] }: GalleryProps) {
   const [isPaused, setIsPaused] = useState(false);
   const carousel = useRef<HTMLDivElement>(null);
   const controls = useAnimation();
+  const x = useMotionValue(0);
+
+  // Sync motion value with state for manual calculations if needed
+  useEffect(() => {
+    return x.on("change", (latest) => setPosition(latest));
+  }, [x]);
 
   // Handle case where no images are provided
   const displayImages = useMemo(() => {
@@ -162,8 +234,9 @@ export default function Gallery({ images = [] }: GalleryProps) {
             drag="x" 
             dragConstraints={{ right: 0, left: -(baseWidth * 2) }}
             animate={controls}
+            style={{ x }}
             onDragEnd={(e, info) => {
-              let newPos = position + info.offset.x;
+              let newPos = x.get() + info.offset.x;
               if (newPos > -baseWidth / 2) {
                 newPos -= baseWidth;
               } else if (newPos < -(baseWidth * 1.5)) {
@@ -172,26 +245,17 @@ export default function Gallery({ images = [] }: GalleryProps) {
               setPosition(newPos);
               controls.start({ x: newPos, transition: { type: "spring", stiffness: 300, damping: 35 } });
             }}
-            className="flex gap-6"
+            className="flex gap-6 py-10"
           >
             {displayImages.map((image, i) => (
-              <motion.div
-                layoutId={`card-gallery-${i}`}
+              <GalleryCard 
                 key={`gallery-${i}`}
+                image={image}
+                index={i}
+                x={x}
+                totalImages={images.length}
                 onClick={() => setSelectedId(i)}
-                className="relative min-w-[260px] md:min-w-[320px] h-[340px] md:h-[420px] rounded-[1.5rem] overflow-hidden border border-white/5 bg-zinc-900/50 group backdrop-blur-sm shrink-0 cursor-pointer"
-              >
-                <motion.img 
-                  layoutId={`img-gallery-${i}`}
-                  src={image} 
-                  alt={`Design ${i}`}
-                  className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <span className="text-fuchsia-400 font-mono text-[10px] uppercase font-bold tracking-widest">Asset #{(i % images.length) + 1}</span>
-                </div>
-                <div className="absolute inset-0 border-[1px] border-white/5 rounded-[1.5rem] pointer-events-none group-hover:border-fuchsia-500/20 transition-colors duration-500" />
-              </motion.div>
+              />
             ))}
           </motion.div>
         </motion.div>
