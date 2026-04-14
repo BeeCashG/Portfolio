@@ -55,6 +55,9 @@ export const metadata: Metadata = {
   },
 };
 
+import Cursor from "@/components/Cursor";
+import ChatBot from "@/components/ChatBot";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -64,6 +67,7 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} bg-[#121212] text-white antialiased selection:bg-cyan-500/30 selection:text-white`}>
       <body className="min-h-full flex flex-col cursor-none lg:cursor-none">
         {children}
+        <ChatBot />
         <Cursor />
       </body>
     </html>
