@@ -1,148 +1,155 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
+import { useRef, useState, useEffect } from "react";
 
-const skillGroups = [
+const skillCategories = [
   {
-    title: "DIGITAL STRATEGY",
-    type: "IMPACT ARCHITECTURE",
-    description: "Orchestrating high-conversion digital ecosystems through data-driven SEO, brand engineering, and strategic content flow.",
-    skills: ["SEO Mastery", "Brand Strategy", "Content Engineering", "CRM Personalization", "Growth Hacking"],
-    accent: "from-cyan-400 to-blue-600",
-    glow: "rgba(34, 211, 238, 0.4)",
-    pattern: "radial-gradient(circle at 10% 20%, rgba(34, 211, 238, 0.05) 0%, transparent 50%)"
+    title: "STRATEGIC INFRASTRUCTURE",
+    id: "SI-01",
+    description: "Multi-channel digital ecosystem design. Focused on brand architecture, growth modeling, and CRM automation.",
+    skills: ["SEO Mastery", "Growth Hacking", "Market Analytics", "Personalization Engine"],
+    stats: ["99.8% ACCURACY", "STRATEGIC ADAPTATION", "EXEC-LEVEL REPORTING"]
   },
   {
-    title: "FULL-STACK DEV",
-    type: "SYSTEM ENGINEERING",
-    description: "Building resilient, high-performance web architecture from the hardware level to the fluid UI transitions.",
-    skills: ["Next.js / React", "Python / Django", "PHP / WordPress", "TypeScript Engine", "Cloud Deployment"],
-    accent: "from-fuchsia-400 to-purple-600",
-    glow: "rgba(217, 70, 239, 0.4)",
-    pattern: "repeating-linear-gradient(45deg, rgba(217, 70, 239, 0.02) 0px, transparent 1px, transparent 15px)"
+    title: "FULL-STACK ENGINEERING",
+    id: "FE-02",
+    description: "Designing resilient, high-performance web systems with clean, scalable technical logic.",
+    skills: ["Next.js / React", "Django / Python", "PHP / WordPress", "Node.js Architecture"],
+    stats: ["LOW-LATENCY LOGIC", "RESILIENT SCALING", "PIXEL-PERFECT UX"]
   },
   {
-    title: "INFRASTRUCTURE",
-    type: "ECOSYSTEM SECURITY",
-    description: "Securing the foundation of digital assets through robust server management and technical auditing.",
-    skills: ["Linux Management", "Security Auditing", "Graphics Design", "Network Architecture", "System Analytics"],
-    accent: "from-amber-400 to-orange-500",
-    glow: "rgba(251, 191, 36, 0.4)",
-    pattern: "url(\"data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h20L0 20z' fill='%23fbbf24' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E\")"
+    title: "SYSTEM ARCHITECTURE",
+    id: "SA-03",
+    description: "Robust enterprise foundations, security auditing, and server-side deployment strategies.",
+    skills: ["Linux Management", "Security Auditing", "Graphics Design", "Network Security"],
+    stats: ["ZERO-DOWNTIME CONFIG", "ISO-COMPLIANCE", "SYSTEM OPTIMIZATION"]
   }
 ];
 
-const SkillCard = ({ group, index, total }: { group: typeof skillGroups[0]; index: number; total: number }) => {
+const BlueprintRow = ({ cat, scrollYProgress, index }: { cat: typeof skillCategories[0]; scrollYProgress: any; index: number }) => {
+  // Calculate relative activation based on scroll
+  const step = 1 / skillCategories.length;
+  const start = index * step;
+  const end = (index + 1) * step;
+  
+  const opacity = useTransform(scrollYProgress, [start, start + 0.1, end - 0.1, end], [0.1, 1, 1, 0.1]);
+  const scale = useTransform(scrollYProgress, [start, start + 0.1, end - 0.1, end], [0.95, 1, 1, 0.95]);
+
+  return (
+    <motion.div 
+      style={{ opacity, scale }}
+      className="h-[80vh] flex flex-col justify-center relative z-10"
+    >
+      <div className="flex items-start gap-8">
+        <div className="hidden md:flex flex-col items-end pt-2">
+            <span className="text-cyan-500 font-mono text-xs font-bold leading-none mb-1">{cat.id}</span>
+            <div className="h-px w-8 bg-cyan-500/30" />
+        </div>
+
+        <div className="flex-1">
+          <div className="mb-6">
+            <h3 className="text-5xl md:text-8xl font-black tracking-tighter text-white mb-2 leading-none uppercase italic">
+              {cat.title}
+            </h3>
+            <p className="text-white/40 font-mono text-[10px] md:text-xs uppercase tracking-[0.3em] mb-4">
+              [ {cat.description} ]
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {cat.skills.map((skill) => (
+              <div key={skill} className="group relative px-6 py-4 border border-white/5 bg-white/[0.01] hover:bg-cyan-500/5 hover:border-cyan-500/30 transition-all duration-300">
+                  <div className="absolute top-0 left-0 w-1 h-1 bg-cyan-500/40" />
+                  <span className="text-white/60 group-hover:text-cyan-400 font-bold text-sm tracking-tight transition-colors">{skill}</span>
+                  <div className="mt-2 h-[1px] w-0 group-hover:w-full bg-cyan-500/50 transition-all duration-500" />
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-12 flex flex-wrap gap-8 opacity-30 group-hover:opacity-100 transition-opacity">
+             {cat.stats.map(s => (
+               <div key={s} className="flex flex-col">
+                  <span className="text-[9px] font-mono text-cyan-500 mb-1">{">>>"} PROCESSING</span>
+                  <span className="text-[10px] font-mono text-white tracking-widest uppercase">{s}</span>
+               </div>
+             ))}
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+export default function Skills() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"]
   });
 
-  // Unique stacking behavior
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.95]);
-  const y = useTransform(scrollYProgress, [0, 1], [0, -50 * (total - index)]);
-  const opacity = useTransform(scrollYProgress, [0.8, 1], [1, 0.6]);
+  // Smooth Laser Animation
+  const laserY = useSpring(useTransform(scrollYProgress, [0, 1], ["0%", "100%"]), {
+    stiffness: 100,
+    damping: 30
+  });
 
   return (
-    <div ref={containerRef} className="h-screen flex items-start pt-24 md:pt-32 sticky top-0">
-      <motion.div 
-        style={{ scale, opacity, y }}
-        className="w-full relative rounded-[3rem] p-8 md:p-16 lg:p-20 overflow-hidden bg-[#0a0a0c] border border-white/5 shadow-[0_40px_100px_rgba(0,0,0,0.5)] cursor-magnetic group"
-      >
-        {/* Holographic Background Pattern */}
-        <div className="absolute inset-0 z-0 pointer-events-none opacity-40" style={{ backgroundImage: group.pattern }} />
-        
-        {/* Glow Aura */}
-        <div 
-          className="absolute -top-24 -right-24 w-96 h-96 blur-[150px] transition-all duration-700 opacity-20 group-hover:opacity-40"
-          style={{ background: group.glow }}
-        />
-
-        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 h-full items-center">
-          <div className="flex flex-col">
-            <div className="flex items-center gap-4 mb-8">
-              <div className={`h-px w-12 bg-gradient-to-r ${group.accent}`} />
-              <span className="text-[10px] md:text-xs font-black uppercase tracking-[0.5em] text-white/40">
-                {group.type}
-              </span>
-            </div>
-            
-            <h3 className={`text-4xl md:text-7xl font-black italic tracking-tighter mb-8 text-transparent bg-clip-text bg-gradient-to-br ${group.accent} leading-none`}>
-              {group.title}.
-            </h3>
-            
-            <p className="text-white/40 text-sm md:text-lg leading-relaxed max-w-xl mb-12">
-              {group.description}
-            </p>
-
-            <div className="flex flex-wrap gap-3">
-               {group.skills.map((s) => (
-                 <div key={s} className="px-4 py-2 rounded-full bg-white/[0.03] border border-white/5 text-[10px] md:text-xs font-bold uppercase tracking-widest text-white/50 hover:text-white transition-colors">
-                    {s}
-                 </div>
-               ))}
-            </div>
-          </div>
-
-          <div className="hidden lg:flex justify-center relative">
-            {/* Visual Representation of Mastery (Abstract Circle) */}
-            <div className="w-[300px] h-[300px] rounded-full border border-white/5 flex items-center justify-center p-8 relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent blur-2xl rounded-full" />
-                <motion.div 
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                  className="absolute inset-4 border border-dashed border-white/10 rounded-full" 
-                />
-                <div className={`text-6xl font-black italic text-transparent bg-clip-text bg-gradient-to-br ${group.accent}`}>
-                  #{index + 1}
-                </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Decorative corner element */}
-        <div className="absolute bottom-8 right-8 flex flex-col items-end opacity-20">
-            <span className="text-[8px] font-mono uppercase tracking-[0.6em] mb-2">Technical Authority</span>
-            <div className={`h-8 w-px bg-gradient-to-t ${group.accent}`} />
-        </div>
-      </motion.div>
-    </div>
-  );
-};
-
-export default function Skills() {
-  return (
-    <section id="skills" className="relative bg-[#09090b] text-white overflow-visible px-6 md:px-12 lg:px-24">
-      {/* Introduction */}
-      <div className="max-w-7xl mx-auto pt-32 mb-12">
-        <motion.div
-           initial={{ opacity: 0, y: 30 }}
-           whileInView={{ opacity: 1, y: 0 }}
-           viewport={{ once: true }}
-           className="relative inline-block"
-        >
-          <h2 className="text-5xl md:text-8xl font-black tracking-tighter text-white mb-4">
-            ARSENAL<span className="text-cyan-500">.</span>
-          </h2>
-          <div className="h-[2px] w-full bg-gradient-to-r from-cyan-500/50 via-white to-transparent" />
-        </motion.div>
+    <section 
+      ref={containerRef}
+      id="skills" 
+      className="relative bg-[#09090b] text-white overflow-visible px-6 md:px-12 lg:px-24 border-t border-white/5"
+    >
+      {/* Blueprint Grid Layer */}
+      <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.03]">
+          <div className="absolute inset-0" style={{ backgroundImage: "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
+          <div className="absolute inset-0" style={{ backgroundImage: "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)", backgroundSize: "200px 200px", border: "1px solid rgba(255,255,255,0.1)" }} />
       </div>
 
-      <div className="max-w-7xl mx-auto relative pb-32">
-        {skillGroups.map((group, index) => (
-          <SkillCard 
-            key={group.title} 
-            group={group} 
-            index={index} 
-            total={skillGroups.length}
-          />
-        ))}
+      {/* Aesthetic Technical Markers */}
+      <div className="absolute top-12 left-12 font-mono text-[9px] text-white/20 select-none uppercase z-0 tracking-[0.5em]">
+          Technical Arsenal // ID_7734_BGU
+      </div>
+      <div className="absolute bottom-12 right-12 font-mono text-[9px] text-white/20 select-none uppercase z-0 tracking-[0.5em] text-right">
+          Grid: 40x40 // Reference: Bikash Gupta
       </div>
 
-      {/* Aesthetic Section End Transition */}
-      <div className="absolute bottom-0 left-0 w-full h-64 bg-gradient-to-t from-black to-transparent pointer-events-none" />
+      <div className="max-w-7xl mx-auto relative min-h-[300vh]">
+        {/* Sticky Laser Engine */}
+        <div className="sticky top-0 h-screen w-full flex items-center pointer-events-none z-50">
+           <motion.div 
+             style={{ top: laserY }}
+             className="absolute left-[-100px] right-[-100px] h-[2px] bg-cyan-400 shadow-[0_0_25px_rgba(34,211,238,0.8),0_0_10px_rgba(34,211,238,0.5)] flex items-center justify-between px-24 mix-blend-screen"
+           >
+              <div className="absolute top-1/2 left-0 -translate-y-1/2 flex items-center gap-2">
+                <div className="w-4 h-4 rounded-full bg-cyan-400 blur-[4px] animate-pulse" />
+                <span className="font-mono text-[8px] text-cyan-400 tracking-tighter uppercase">Scanning...</span>
+              </div>
+              
+              <div className="absolute top-1/2 right-0 -translate-y-1/2 flex items-center gap-2">
+                <span className="font-mono text-[8px] text-cyan-400 tracking-tighter uppercase whitespace-nowrap">Depth: {Math.round(Math.random() * 100)}m.sec</span>
+                <div className="w-4 h-4 rounded-full bg-cyan-400 blur-[4px] animate-pulse" />
+              </div>
+           </motion.div>
+        </div>
+
+        {/* Content Layers */}
+        <div className="relative pt-[20vh]">
+          {skillCategories.map((cat, index) => (
+            <BlueprintRow 
+              key={cat.id} 
+              cat={cat} 
+              scrollYProgress={scrollYProgress} 
+              index={index} 
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Decorative End Piece */}
+      <div className="max-w-7xl mx-auto py-24 border-t border-dashed border-white/10 text-center">
+          <p className="text-[10px] font-mono text-white/20 uppercase tracking-[1em]">END OF SYSTEM READOUT</p>
+      </div>
     </section>
   );
 }
