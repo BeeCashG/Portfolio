@@ -66,12 +66,6 @@ const GalleryCard = ({ image, index, x, totalImages, cardWidth, onClick }: Galle
     return `brightness(${amount})`;
   });
 
-  // 4. Image Parallax for internal depth
-  const imageX = useSpring(useTransform(centerOfCard, (val) => {
-    const distance = val - centerOfScreen;
-    return (distance / 10);
-  }), springConfig);
-
   return (
     <motion.div
       layoutId={`card-gallery-${index}`}
@@ -102,8 +96,7 @@ const GalleryCard = ({ image, index, x, totalImages, cardWidth, onClick }: Galle
           layoutId={`img-gallery-${index}`}
           src={image} 
           alt={`Design ${index}`}
-          style={{ x: imageX, scale: 1.2 }}
-          className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-[1.3]"
+          className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
         />
       </motion.div>
 
