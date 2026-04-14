@@ -1,0 +1,9 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="64" height="64" rx="12" fill="#09090b"/>
+  <circle cx="32" cy="32" r="28" stroke="#22d3ee" stroke-width="1.5" stroke-dasharray="4 2"/>
+  <text x="50%" y="54%" font-family="Arial, sans-serif" font-weight="900" font-size="28" fill="#22d3ee" text-anchor="middle" letter-spacing="-1">BG</text>
+  <path id="curve" d="M 12 32 A 20 20 0 1 1 52 32" fill="transparent" />
+  <text fill="#ffffff" font-family="Arial, sans-serif" font-size="5" font-weight="bold" letter-spacing="1">
+    <textPath href="#curve" startOffset="50%" text-anchor="middle">ER. BIKASH GUPTA</textPath>
+  </text>
+</svg>
