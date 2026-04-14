@@ -129,7 +129,7 @@ export default function Projects() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="group relative h-[450px] rounded-[32px] overflow-hidden bg-white/[0.01] border border-cyan-500/20 hover:border-cyan-400/50 hover:shadow-[0_0_50px_rgba(34,211,238,0.15)] transition-all duration-500"
+                className="group relative h-[450px] rounded-[32px] overflow-hidden bg-white/[0.01] border border-cyan-500/20 hover:border-cyan-400/50 hover:shadow-[0_0_50px_rgba(34,211,238,0.15)] transition-all duration-500 cursor-magnetic"
               >
                 {/* Project Image Wrapper */}
                 <div className="absolute inset-0 z-0">

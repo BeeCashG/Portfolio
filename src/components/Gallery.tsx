@@ -82,7 +82,7 @@ const GalleryCard = ({ image, index, x, totalImages, cardWidth, onClick }: Galle
         width: cardInnerWidth,
         height: cardInnerWidth
       }}
-      className="relative rounded-[2rem] overflow-hidden border border-white/5 bg-zinc-900/40 group backdrop-blur-xl shrink-0 cursor-pointer"
+      className="relative rounded-[2rem] overflow-hidden border border-white/5 bg-zinc-900/40 group backdrop-blur-xl shrink-0 cursor-pointer cursor-magnetic"
     >
       {/* Dynamic Neon Border Glow */}
       <motion.div 
