@@ -136,9 +136,23 @@ export default function Resume() {
                 Journey.
               </span>
             </h2>
-            <p className="text-zinc-400 text-lg md:text-xl font-light max-w-lg leading-relaxed">
+            <p className="text-zinc-400 text-lg md:text-xl font-light max-w-lg leading-relaxed mb-10">
               A chronological mapping of my technical operations, academic contributions, and digital strategy roles.
             </p>
+            
+            <motion.a 
+              href="/Bikash_Gupta_CV.pdf"
+              download
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="inline-flex items-center gap-4 bg-cyan-500/10 border border-cyan-500/30 hover:bg-cyan-500/20 hover:border-cyan-500/50 px-8 py-4 rounded-xl text-cyan-400 font-bold tracking-widest text-xs uppercase transition-all duration-300 shadow-[0_0_20px_rgba(34,211,238,0.1)] hover:shadow-[0_0_25px_rgba(34,211,238,0.2)]"
+            >
+              <span>Download CV</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+              </svg>
+            </motion.a>
           </div>
           
           <div className="relative group w-full xl:w-auto">
