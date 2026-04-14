@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useAnimation, AnimatePresence, useMotionValue, useTransform, useSpring } from "framer-motion";
+import { motion, useAnimation, AnimatePresence, useMotionValue, useTransform, useSpring, useMotionTemplate } from "framer-motion";
 import { useState, useRef, useEffect, useMemo } from "react";
 
 interface GalleryProps {
@@ -22,8 +22,11 @@ const GalleryCard = ({ image, index, x, totalImages, cardWidth, onClick }: Galle
   const cardInnerWidth = cardWidth - 24; 
   
   // Base transform logic: Viewport tracking
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   const centerOfCard = useTransform(x, (latest: number) => latest + initialOffset + (cardInnerWidth / 2));
-  const centerOfScreen = typeof window !== 'undefined' ? window.innerWidth / 2 : 500;
+  const centerOfScreen = mounted && typeof window !== 'undefined' ? window.innerWidth / 2 : 500;
   
   // 1. Kinetic Spring Physics for ultra-smoothness
   const springConfig = { stiffness: 100, damping: 30, mass: 1 };
@@ -67,20 +70,22 @@ const GalleryCard = ({ image, index, x, totalImages, cardWidth, onClick }: Galle
     return `brightness(${amount})`;
   });
 
+  const filter = useMotionTemplate`${grayscale} ${brightness}`;
+
   return (
     <motion.div
       layoutId={`card-gallery-${index}`}
       onClick={onClick}
       style={{ 
-        scale, 
-        opacity, 
-        rotateY,
-        z,
-        filter: `${grayscale} ${brightness}`,
+        scale: mounted ? scale : 1, 
+        opacity: mounted ? opacity : 0.43, 
+        rotateY: mounted ? rotateY : 0,
+        z: mounted ? z : -100,
+        filter: mounted ? filter : "none",
         perspective: "1000px",
         transformStyle: "preserve-3d",
-        width: cardInnerWidth,
-        height: cardInnerWidth
+        width: `${cardInnerWidth}px`,
+        height: `${cardInnerWidth}px`
       }}
       className="relative rounded-[2rem] overflow-hidden border border-white/5 bg-zinc-900/40 group backdrop-blur-xl shrink-0 cursor-pointer cursor-magnetic"
     >
