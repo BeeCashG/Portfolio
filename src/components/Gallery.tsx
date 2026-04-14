@@ -85,7 +85,7 @@ const GalleryCard = ({ image, index, x, totalImages, cardWidth, onClick }: Galle
         perspective: "1000px",
         transformStyle: "preserve-3d"
       }}
-      className="relative rounded-[2rem] overflow-hidden border border-white/5 bg-zinc-900/40 group backdrop-blur-xl shrink-0 cursor-pointer transition-all duration-500"
+      className="relative rounded-[2rem] overflow-hidden border border-white/5 bg-zinc-900/40 group backdrop-blur-xl shrink-0 cursor-pointer"
       style={{ 
         width: cardInnerWidth,
         height: typeof window !== 'undefined' && window.innerWidth < 768 ? 360 : 460 
@@ -128,7 +128,6 @@ const GalleryCard = ({ image, index, x, totalImages, cardWidth, onClick }: Galle
 export default function Gallery({ images = [] }: GalleryProps) {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [isZoomed, setIsZoomed] = useState(false);
-  const [position, setPosition] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [cardWidth, setCardWidth] = useState(344); // Default: 320 + 24 (gap-6)
   const carousel = useRef<HTMLDivElement>(null);
@@ -146,11 +145,6 @@ export default function Gallery({ images = [] }: GalleryProps) {
     return () => window.removeEventListener('resize', updateWidth);
   }, []);
 
-  // Sync motion value with state for manual calculations if needed
-  useEffect(() => {
-    return x.on("change", (latest) => setPosition(latest));
-  }, [x]);
-
   // Handle case where no images are provided
   const displayImages = useMemo(() => {
     if (images.length === 0) return [];
@@ -165,7 +159,6 @@ export default function Gallery({ images = [] }: GalleryProps) {
   useEffect(() => {
     if (images.length > 0) {
       const initialPos = -baseWidth;
-      setPosition(initialPos);
       x.set(initialPos);
       controls.set({ x: initialPos });
     }
@@ -173,19 +166,20 @@ export default function Gallery({ images = [] }: GalleryProps) {
 
   const handleArrowClick = (direction: 'left' | 'right') => {
     if (images.length === 0) return;
-    const cardWidth = 320 + 24; 
-    let newPos = position + (direction === 'left' ? cardWidth : -cardWidth);
+    const currentX = x.get();
+    let newPos = currentX + (direction === 'left' ? cardWidth : -cardWidth);
 
     // Silent reset logic for infinite feel
     if (newPos > -baseWidth / 2) {
       newPos -= baseWidth;
+      x.set(newPos);
       controls.set({ x: newPos });
     } else if (newPos < -(baseWidth * 2)) {
       newPos += baseWidth;
+      x.set(newPos);
       controls.set({ x: newPos });
     }
 
-    setPosition(newPos);
     controls.start({ x: newPos, transition: { type: "spring", stiffness: 300, damping: 35 } });
   };
 
@@ -197,18 +191,19 @@ export default function Gallery({ images = [] }: GalleryProps) {
     }
 
     const startAnimation = () => {
+      const currentX = x.get();
       const speed = 40; // Pixels per second
-      const remainingDistance = Math.abs(position - (-(baseWidth * 2)));
+      const remainingDistance = Math.abs(currentX - (-(baseWidth * 2)));
       const duration = remainingDistance / speed;
 
       controls.start({
-        x: [position, -(baseWidth * 2)],
+        x: [currentX, -(baseWidth * 2)],
         transition: {
           duration,
           ease: "linear",
           onComplete: () => {
             const resetPos = -baseWidth;
-            setPosition(resetPos);
+            x.set(resetPos);
             controls.set({ x: resetPos });
           }
         }
@@ -218,7 +213,7 @@ export default function Gallery({ images = [] }: GalleryProps) {
     startAnimation();
 
     return () => controls.stop();
-  }, [position, isPaused, selectedId, baseWidth, images.length, controls]);
+  }, [isPaused, selectedId, baseWidth, images.length, controls, x]);
 
   const displayDesign = selectedId !== null ? displayImages[selectedId] : null;
 
@@ -303,10 +298,13 @@ export default function Gallery({ images = [] }: GalleryProps) {
               let newPos = x.get() + info.offset.x;
               if (newPos > -baseWidth / 2) {
                 newPos -= baseWidth;
+                x.set(newPos);
+                controls.set({ x: newPos });
               } else if (newPos < -(baseWidth * 1.5)) {
                 newPos += baseWidth;
+                x.set(newPos);
+                controls.set({ x: newPos });
               }
-              setPosition(newPos);
               controls.start({ x: newPos, transition: { type: "spring", stiffness: 300, damping: 35 } });
             }}
             className="flex gap-6 py-10"
