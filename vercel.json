@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/HisaabKitaab",
+      "destination": "http://192.250.235.218/HisaabKitaab"
+    }
+  ]
+}
